@@ -1,2 +1,0 @@
-# apollo-movie
-apollo-movie
