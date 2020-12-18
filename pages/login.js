@@ -1,6 +1,6 @@
-import Navbar from '../../components/shared/Navbar';
+import Navbar from '../components/shared/Navbar';
 
-const portfolios = () => {
+const Login = () => {
     return (
         <>
             <Navbar/>
@@ -18,18 +18,18 @@ const portfolios = () => {
                             <h1 className="page-title">Login</h1>
                             <form>
                                 <div className="form-group">
-                                    <label htmlFor="email">Email</label>
-                                    <input
-                                        type="email"
-                                        className="form-control"
-                                        id="email" />
+                                <label htmlFor="email">Email</label>
+                                <input
+                                    type="email"
+                                    className="form-control"
+                                    id="email" />
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="password">Password</label>
-                                    <input
-                                        type="password"
-                                        className="form-control"
-                                        id="password" />
+                                <label htmlFor="password">Password</label>
+                                <input
+                                    type="password"
+                                    className="form-control"
+                                    id="password" />
                                 </div>
                                 <button
                                 type="submit"
@@ -43,4 +43,4 @@ const portfolios = () => {
     )
 }
 
-export default portfolios
+export default Login
