@@ -16,13 +16,16 @@ app.prepare().then(() => {
 
   // Construct a shcema, using GraphQl schema language
   const schema = buildSchema(`
-
     ${portfolioTypes}
 
     type Query {
         hello: String
         portfolio(id: ID): Portfolio
         portfolios: [Portfolio]
+    }
+
+    type Mutation {
+        createPortfolio(input: PortfolioInput): Portfolio
     }
   `);
 
