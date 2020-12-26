@@ -38,22 +38,25 @@ const data = {
 
 
 
-exports.portfolioResolvers = {
+exports.portfolioQueries = {
     hello: () => {
         return 'Hello World!';
     },
-    portfolio: ({ id }) => {
-    const portfolio = data.portfolios.find(p => p._id === id)
-    return portfolio;
+    portfolio: (root, { id }) => {
+        const portfolio = data.portfolios.find(p => p._id === id)
+        return portfolio;
     },
     portfolios: () => {
-    return data.portfolios
-    },
-    createPortfolio: ({ input }) => {
-        const _id = require('crypto').randomBytes(10).toString('hex');
-        const newPortfolio = {...input}
-        newPortfolio._id = _id;
-        data.portfolios.push(newPortfolio)
-        return newPortfolio;
+        return data.portfolios
     }
+}
+
+exports.portfolioMutations = {
+  createPortfolio: (root, { input }) => {
+    const _id = require('crypto').randomBytes(10).toString('hex');
+      const newPortfolio = {...input}
+      newPortfolio._id = _id;
+      data.portfolios.push(newPortfolio)
+      return newPortfolio;
+  }
 }
