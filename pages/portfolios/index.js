@@ -3,6 +3,35 @@ import axios from 'axios';
 import PortfolioCard from '@/components/portfolios/PortfolioCard';
 import Link from 'next/link';
 
+const graphUpdatePortfolio = (id) => {
+    const query = `
+    mutation updatePortfolio {
+        updatePortfolio(id: "${id}", input: {
+            title: "Update Job"
+            company: "Update Job"
+            companyWebsite: "Update Job"
+            location: "Update Job"
+            jobTitle: "Update Job"
+            description: "Update Job"
+            startDate: "Update Job"
+            endDate: "Update Job"
+        }) {
+            _id
+            title
+            company
+            companyWebsite
+            location
+            jobTitle
+            description
+            startDate
+            endDate
+        }
+    }`
+    return axios.post('http://localhost:3000/graphql', { query })
+            .then(({data: graph}) => graph.data)
+            .then(data => data.updatePortfolio)
+}
+
 const graphCreatePortfolio = () => {
     const query = `
     mutation createPortfolio {
@@ -61,6 +90,14 @@ const Portfolios = ({ data }) => {
         const newPortfolios = [...portfolios, newPortfolio];
         setportfolios(newPortfolios);
     }
+    
+    const updatePortfolio = async (id) => {
+        const updatedPortfolio = await graphUpdatePortfolio(id);
+        const index = portfolios.findIndex(p => p._id === id);
+        const newPortfolios = [...portfolios];
+        newPortfolios[index] = updatedPortfolio;
+        setportfolios(newPortfolios);
+    }
 
     return (
         <>
@@ -86,6 +123,12 @@ const Portfolios = ({ data }) => {
                                 <PortfolioCard portfolio={portfolio}/>
                                 </a>
                             </Link>
+                            <button 
+                                className="btn btn-warning" 
+                                onClick={()=>updatePortfolio(portfolio._id)}
+                            >
+                                Update Portfolio
+                            </button>
                         </div>
                         ))
                     }
