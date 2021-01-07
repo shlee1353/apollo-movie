@@ -15,3 +15,44 @@ export const GET_PORTFOLIO = gql`
         }
     }
 `
+
+export const GET_PORTFOLIOS = gql`
+    query Portfolios {
+        portfolios {
+            _id
+            title
+            company
+            companyWebsite
+            location
+            jobTitle
+            description
+            startDate
+            endDate
+        }
+    }
+`
+
+export const CREATE_PORTFOLIO = gql `
+    mutation createPortfolio {
+        createPortfolio(input: {
+            title: "New Job"
+            company: "New Job"
+            companyWebsite: "New Job"
+            location: "New Job"
+            jobTitle: "New Job"
+            description: "New Job"
+            startDate: "New Job"
+            endDate: "New Job"
+        }) {
+            _id
+            title
+            company
+            companyWebsite
+            location
+            jobTitle
+            description
+            startDate
+            endDate
+        }
+    }
+`

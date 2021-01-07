@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import PortfolioCard from '@/components/portfolios/PortfolioCard';
 import Link from 'next/link';
+import { useLazyQuery, useMutation } from '@apollo/client';
+import { GET_PORTFOLIOS, CREATE_PORTFOLIO} from '@/apollo/queries';
 
 const graphDeletePortfolio = (id) => {
     const query = `
@@ -43,71 +45,42 @@ const graphUpdatePortfolio = (id) => {
             .then(data => data.updatePortfolio)
 }
 
-const graphCreatePortfolio = () => {
-    const query = `
-    mutation createPortfolio {
-        createPortfolio(input: {
-            title: "New Job"
-            company: "New Job"
-            companyWebsite: "New Job"
-            location: "New Job"
-            jobTitle: "New Job"
-            description: "New Job"
-            startDate: "New Job"
-            endDate: "New Job"
-        }) {
-            _id
-            title
-            company
-            companyWebsite
-            location
-            jobTitle
-            description
-            startDate
-            endDate
+const Portfolios = () => {
+
+    const [portfolios, setPortfolios] = useState([]);
+    const [getPortfolios, {loading, data}] = useLazyQuery(GET_PORTFOLIOS);
+    const [createPortfolio] = useMutation(CREATE_PORTFOLIO, {
+        update(cache, {data: {createPortfolio}}) {
+            const {portfolios} = cache.readQuery({query: GET_PORTFOLIOS})
+            cache.writeQuery({
+                query: GET_PORTFOLIOS,
+                data: { portfolios: [...portfolios, createPortfolio]}
+            })
         }
-    }`
-    return axios.post('http://localhost:3000/graphql', { query })
-            .then(({data: graph}) => graph.data)
-            .then(data => data.createPortfolio)
-}
+    });
 
-const fetchPortfolios = () => {
-    const query = `
-    query Portfolios {
-        portfolios {
-            _id
-            title
-            company
-            companyWebsite
-            location
-            jobTitle
-            description
-            startDate
-            endDate
-        }
-    }`
-    return axios.post('http://localhost:3000/graphql', { query })
-            .then(({data: graph}) => graph.data)
-            .then(data => data.portfolios)
-}
+    // const onPortfolioCreated = (dataC) => setPortfolios([...portfolios, dataC.createPortfolio])
+    
+    // const [createPortfolio] = useMutation(CREATE_PORTFOLIO, {onCompleted:onPortfolioCreated });
 
-const Portfolios = ({ data }) => {
+    useEffect(() => {
+        getPortfolios();
+    }, [])
 
-    const [portfolios, setportfolios] = useState(data.portfolios)
-
-    const createPortfolio = async () => {
-        const newPortfolio = await graphCreatePortfolio();
-        const newPortfolios = [...portfolios, newPortfolio];
-        setportfolios(newPortfolios);
+    if(data && data.portfolios.length > 0 && (portfolios.length === 0 || data.portfolios.length !== portfolios.length)) {
+        setPortfolios(data.portfolios);
     }
+
+    if(loading) { 
+        return 'loading...' 
+    };
     
     const updatePortfolio = async (id) => {
         const updatedPortfolio = await graphUpdatePortfolio(id);
         const index = portfolios.findIndex(p => p._id === id);
         const newPortfolios = [...portfolios];
         newPortfolios[index] = updatedPortfolio;
-        setportfolios(newPortfolios);
+        setPortfolios(newPortfolios);
     }
 
     const deletePortfolio = async (id) => {
@@ -115,7 +88,7 @@ const Portfolios = ({ data }) => {
         const index = portfolios.findIndex(p => p._id === deletedId);
         const newPortfolios = [...portfolios];
         newPortfolios.splice(index, 1);
-        setportfolios(newPortfolios);
+        setPortfolios(newPortfolios);
     }
 
     return (
@@ -161,11 +134,6 @@ const Portfolios = ({ data }) => {
             </section>
         </>
     )
-}
-
-Portfolios.getInitialProps = async () => {
-    const portfolios = await fetchPortfolios();
-    return { data: { portfolios }}
 }
 
 export default Portfolios
