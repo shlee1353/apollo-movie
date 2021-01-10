@@ -1,6 +1,8 @@
-import React, { useState, useEffect} from 'react';
-import { useQuery, useLazyQuery } from '@apollo/client';
+import React from 'react';
+import { useQuery } from '@apollo/client';
 import { GET_PORTFOLIO } from '@/apollo/queries';
+import withApollo from '@/hoc/withApollo';
+import { getDataFromTree } from "@apollo/client/react/ssr";
 
 // import axios from 'axios';
 
@@ -27,23 +29,8 @@ import { GET_PORTFOLIO } from '@/apollo/queries';
 // }
 
 const PortfolioDetail = ({ query }) => {
-
-    const [portfolio, setPortfolio] = useState(null);
-    const [ getPortfolio, {loading, data} ] = useLazyQuery(GET_PORTFOLIO);
-    // const { loading, error, data } = useQuery(GET_PORTFOLIO, { variables: { id: query.id }});
-
-    useEffect(() => {
-        getPortfolio({variables: {id: query.id}})
-    }, [])
-
-    // const portfolio = data?.portfolio || {};
-    if(data && !portfolio) {
-        setPortfolio(data.portfolio);
-    }
-
-    if(loading || !portfolio) { 
-        return 'loading...' 
-    };
+    const { data } = useQuery(GET_PORTFOLIO, { variables: {id: query.id }});
+    const portfolio = data && data.portfolio || {};
 
     return (
         <div className="portfolio-detail">
@@ -88,4 +75,4 @@ PortfolioDetail.getInitialProps = async ({ query }) => {
     return { query }
 }
 
-export default PortfolioDetail;
+export default withApollo(PortfolioDetail, { getDataFromTree });
