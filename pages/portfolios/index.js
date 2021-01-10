@@ -4,6 +4,8 @@ import PortfolioCard from '@/components/portfolios/PortfolioCard';
 import Link from 'next/link';
 import { useLazyQuery, useMutation } from '@apollo/client';
 import { GET_PORTFOLIOS, CREATE_PORTFOLIO} from '@/apollo/queries';
+import withApollo from '@/hoc/withApollo';
+import { getDataFromTree } from "@apollo/client/react/ssr";
 
 const graphDeletePortfolio = (id) => {
     const query = `
@@ -136,4 +138,4 @@ const Portfolios = () => {
     )
 }
 
-export default Portfolios
+export default withApollo(Portfolios, { getDataFromTree });
