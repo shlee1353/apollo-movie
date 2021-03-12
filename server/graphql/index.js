@@ -5,7 +5,7 @@ const {
     portfolioQueries, 
     portfolioMutations, 
     userMutations } = require('./resolvers');
-const { portfolioTypes } = require('./types');
+const { portfolioTypes, userTypes } = require('./types');
 
 const Portfolio = require('./models/Portfolio');
 const User = require('./models/User');
@@ -15,6 +15,7 @@ exports.createApolloServer = () => {
     // Construct a shcema, using GraphQl schema language
     const typeDefs = gql`
         ${portfolioTypes}
+        ${userTypes}
 
         type Query {
             portfolio(id: ID): Portfolio
@@ -26,8 +27,8 @@ exports.createApolloServer = () => {
             updatePortfolio(id: ID, input: PortfolioInput): Portfolio
             deletePortfolio(id: ID): ID
 
+            signUp(input: SignUpInput): String
             signIn: String
-            signUp: String
             signOut: String
         }
     `;
